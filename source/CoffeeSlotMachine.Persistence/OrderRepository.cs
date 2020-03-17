@@ -22,6 +22,7 @@ namespace CoffeeSlotMachine.Persistence
         {
             _dbContext.Orders.Add(order);
             _dbContext.SaveChanges();
+            //test
         }
 
     }
