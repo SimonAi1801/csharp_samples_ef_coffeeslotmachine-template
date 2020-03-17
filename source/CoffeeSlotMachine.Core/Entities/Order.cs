@@ -10,6 +10,9 @@ namespace CoffeeSlotMachine.Core.Entities
     /// </summary>
     public class Order : EntityObject
     {
+        private int _throwenInCents = 0;
+
+
         /// <summary>
         /// Datum und Uhrzeit der Bestellung
         /// </summary>
@@ -29,7 +32,7 @@ namespace CoffeeSlotMachine.Core.Entities
         /// <summary>
         /// Summe der eingeworfenen Cents.
         /// </summary>
-        public int ThrownInCents => -1;
+        public int ThrownInCents => _throwenInCents;
 
         /// <summary>
         /// Summe der Cents die zurückgegeben werden
@@ -55,7 +58,8 @@ namespace CoffeeSlotMachine.Core.Entities
         /// <returns>isFinished ist true, wenn der Produktpreis zumindest erreicht wurde</returns>
         public bool InsertCoin(int coinValue)
         {
-            throw new NotImplementedException();
+            _throwenInCents += coinValue;
+            return _throwenInCents >= Product.PriceInCents;
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ namespace CoffeeSlotMachine.Core.Contracts
 {
     public interface IOrderRepository
     {
-        IEnumerable<Order> GetAllWithProduct();
+        IEnumerable<Order> GetAllOrders();
 
         public void AddOrder(Order order);
     }

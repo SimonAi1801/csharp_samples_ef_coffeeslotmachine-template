@@ -19,15 +19,14 @@ namespace CoffeeSlotMachine.Persistence
                                     .Coins
                                     .ToArray();
 
-        public void AddCoin(Coin[] coins) 
+        public void AddCoin(int coinValue)
         {
-            foreach (Coin coin in coins)
-            {
-                Coin dbCoin = _dbContext
-                              .Coins
-                              .SingleOrDefault(c => c.CoinValue == coin.CoinValue);
-                dbCoin.Amount += coin.Amount;
-            }
+
+            var dbCoin = _dbContext
+                          .Coins
+                          .SingleOrDefault(c => c.CoinValue == coinValue);
+            dbCoin.Amount++;
+
             _dbContext.SaveChanges();
         }
 
