@@ -87,7 +87,7 @@ namespace CoffeeSlotMachine.ControllerTest
                 var products = controller.GetProducts();
                 var product = products.Single(p => p.Name == "Latte");
                 var order = controller.OrderCoffee(product);
-                Sbool isFinished = controller.InsertCoin(order, 50);
+                bool isFinished = controller.InsertCoin(order, 50);
                 Assert.AreEqual(true, isFinished, "50 Cent sind genau");
                 Assert.AreEqual(50, order.ThrownInCents, "Einwurf stimmt nicht");
                 Assert.AreEqual(50 - product.PriceInCents, order.ReturnCents);
