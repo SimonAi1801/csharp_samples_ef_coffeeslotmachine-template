@@ -4,6 +4,7 @@ using CoffeeSlotMachine.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace CoffeeSlotMachine.Core.Logic
 {
@@ -33,7 +34,7 @@ namespace CoffeeSlotMachine.Core.Logic
         public IEnumerable<Product> GetProducts() => _productRepository
                                                      .GetAllProducts()
                                                      .OrderBy(p => p.Name);
-        
+
 
         /// <summary>
         /// Eine Bestellung wird für das Produkt angelegt.
@@ -68,6 +69,7 @@ namespace CoffeeSlotMachine.Core.Logic
                 order.FinishPayment(_coinRepository.GetAllCoins());
 
                 _orderRepository.UpdateOrder(order);
+
                 isFinished = true;
             }
             return isFinished;
@@ -85,9 +87,20 @@ namespace CoffeeSlotMachine.Core.Logic
         /// Gibt den Inhalt des Münzdepots als String zurück
         /// </summary>
         /// <returns></returns>
-        public string GetCoinDepotString() => _coinRepository
-                                              .GetAllCoins()
-                                              .ToString();
+        public string GetCoinDepotString()
+        {
+            StringBuilder sb = new StringBuilder();
+            var coins = _coinRepository.GetAllCoins();
+            foreach (var item in coins.OrderByDescending(c => c.CoinValue))
+            {
+                sb.Append($"{item.Amount}*{item.CoinValue}");
+                if (item.CoinValue != _coinRepository.GetAllCoins()[0].CoinValue)
+                {
+                    sb.Append(" + ");
+                }
+            }
+            return sb.ToString();
+        }
 
         /// <summary>
         /// Liefert alle Orders inkl. der Produkte zurück

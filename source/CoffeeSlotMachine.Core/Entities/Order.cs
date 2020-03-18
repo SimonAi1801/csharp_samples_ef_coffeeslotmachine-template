@@ -90,20 +90,33 @@ namespace CoffeeSlotMachine.Core.Entities
         /// <param name="coins">Aktueller Zustand des Münzdepots</param>
         public void FinishPayment(IEnumerable<Coin> coins)
         {
+            int ret = _returnCents;
             foreach (var item in coins.OrderByDescending(c => c.CoinValue))
             {
-                if (_returnCents >= item.CoinValue && item.Amount > 0)
+                if (ret >= item.CoinValue && item.Amount > 0)
                 {
-                    while (_returnCents >= item.CoinValue && item.Amount > 0)
+                    if (ret <= item.CoinValue)
                     {
-                        _returnCents -= item.CoinValue;
+                        ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue}";
+                    }
+                    else
+                    {
+                        ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue};";
+                    }
+
+                    ret -= item.CoinValue;
+                    item.Amount--;
+
+                    while (ret > item.CoinValue && item.Amount > 0)
+                    {
+                        ret -= item.CoinValue;
                         item.Amount--;
                         ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue};";
                     }
                 }
             }
 
-            if (_returnCents > 0)
+            if (ret > 0)
             {
                 _donationCents = _returnCents;
             }
