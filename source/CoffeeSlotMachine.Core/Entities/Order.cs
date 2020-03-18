@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace CoffeeSlotMachine.Core.Entities
 {
@@ -11,7 +12,7 @@ namespace CoffeeSlotMachine.Core.Entities
     public class Order : EntityObject
     {
         private int _throwenInCents;
-        private int _returnCoins;
+        private int _returnCents;
         private int _donationCents;
 
 
@@ -40,7 +41,7 @@ namespace CoffeeSlotMachine.Core.Entities
         /// <summary>
         /// Summe der Cents die zurückgegeben werden
         /// </summary>
-        public int ReturnCents => _returnCoins;
+        public int ReturnCents => _returnCents;
 
 
         public int ProductId { get; set; }
@@ -74,7 +75,7 @@ namespace CoffeeSlotMachine.Core.Entities
 
             if (_throwenInCents >= Product.PriceInCents)
             {
-                _returnCoins = _throwenInCents - Product.PriceInCents;
+                _returnCents = _throwenInCents - Product.PriceInCents;
                 return true;
             }
             ThrownInCoinValues = $"{ThrownInCoinValues};";
@@ -89,8 +90,23 @@ namespace CoffeeSlotMachine.Core.Entities
         /// <param name="coins">Aktueller Zustand des Münzdepots</param>
         public void FinishPayment(IEnumerable<Coin> coins)
         {
+            foreach (var item in coins.OrderByDescending(c => c.CoinValue))
+            {
+                if (_returnCents >= item.CoinValue && item.Amount > 0)
+                {
+                    while (_returnCents >= item.CoinValue && item.Amount > 0)
+                    {
+                        _returnCents -= item.CoinValue;
+                        item.Amount--;
+                        ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue};";
+                    }
+                }
+            }
 
-            throw new NotImplementedException();
+            if (_returnCents > 0)
+            {
+                _donationCents = _returnCents;
+            }
         }
     }
 }
