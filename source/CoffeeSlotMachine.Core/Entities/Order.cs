@@ -10,7 +10,9 @@ namespace CoffeeSlotMachine.Core.Entities
     /// </summary>
     public class Order : EntityObject
     {
-        private int _throwenInCents = 0;
+        private int _throwenInCents;
+        private int _returnCoins;
+        private int _donationCents;
 
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace CoffeeSlotMachine.Core.Entities
         /// <summary>
         /// Summe der Cents die zurückgegeben werden
         /// </summary>
-        public int ReturnCents => -1;
+        public int ReturnCents => _returnCoins;
 
 
         public int ProductId { get; set; }
@@ -49,7 +51,7 @@ namespace CoffeeSlotMachine.Core.Entities
         /// Kann der Automat mangels Kleingeld nicht
         /// mehr herausgeben, wird der Rest als Spende verbucht
         /// </summary>
-        public int DonationCents => -1;
+        public int DonationCents => _donationCents;
 
         /// <summary>
         /// Münze wird eingenommen.
@@ -59,7 +61,17 @@ namespace CoffeeSlotMachine.Core.Entities
         public bool InsertCoin(int coinValue)
         {
             _throwenInCents += coinValue;
-            return _throwenInCents >= Product.PriceInCents;
+            int diff = _throwenInCents - Product.PriceInCents;
+
+            if (diff >= 0)
+            {
+                _returnCoins = diff;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

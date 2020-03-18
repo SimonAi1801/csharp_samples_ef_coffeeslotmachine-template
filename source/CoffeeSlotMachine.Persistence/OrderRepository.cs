@@ -23,5 +23,11 @@ namespace CoffeeSlotMachine.Persistence
             _dbContext.Orders.Add(order);
             _dbContext.SaveChanges();
         }
+
+        public void UpdateOrder(Order order) 
+        {
+            _dbContext.Orders.Update(order);
+            _dbContext.SaveChanges();
+        }
     }
 }

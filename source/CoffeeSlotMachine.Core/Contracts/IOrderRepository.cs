@@ -8,5 +8,7 @@ namespace CoffeeSlotMachine.Core.Contracts
         IEnumerable<Order> GetAllOrders();
 
         public void AddOrder(Order order);
+
+        public void UpdateOrder(Order order);
     }
 }

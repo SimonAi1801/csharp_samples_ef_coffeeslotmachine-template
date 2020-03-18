@@ -26,16 +26,14 @@ namespace CoffeeSlotMachine.Core.Logic
             _productRepository = new ProductRepository(_dbContext);
         }
 
-
         /// <summary>
         /// Gibt alle Produkte sortiert nach Namen zurück
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Product> GetProducts()
-        {
-            return _productRepository.GetAllProducts()
-                                     .OrderBy(p => p.Name);
-        }
+        public IEnumerable<Product> GetProducts() => _productRepository
+                                                     .GetAllProducts()
+                                                     .OrderBy(p => p.Name);
+        
 
         /// <summary>
         /// Eine Bestellung wird für das Produkt angelegt.
@@ -64,7 +62,11 @@ namespace CoffeeSlotMachine.Core.Logic
             
             if (order.InsertCoin(coinValue))
             {
-                order.FinishPayment(_dbContext.Coins.ToArray());
+                order.FinishPayment(_dbContext.Coins
+                      .ToArray());
+                _orderRepository
+                      .UpdateOrder(order);
+                isFinished = true;
             }
             return isFinished;
         }
@@ -73,19 +75,24 @@ namespace CoffeeSlotMachine.Core.Logic
         /// Gibt den aktuellen Inhalt der Kasse, sortiert nach Münzwert absteigend zurück
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Coin> GetCoinDepot() => _coinRepository.GetAllCoins();
+        public IEnumerable<Coin> GetCoinDepot() => _coinRepository
+                                                   .GetAllCoins()
+                                                   .OrderByDescending(c => c.CoinValue);
 
         /// <summary>
         /// Gibt den Inhalt des Münzdepots als String zurück
         /// </summary>
         /// <returns></returns>
-        public string GetCoinDepotString() => _coinRepository.GetAllCoins().ToString();
+        public string GetCoinDepotString() => _coinRepository
+                                              .GetAllCoins()
+                                              .ToString();
 
         /// <summary>
         /// Liefert alle Orders inkl. der Produkte zurück
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Order> GetAllOrdersWithProduct() => _orderRepository.GetAllOrders();
+        public IEnumerable<Order> GetAllOrdersWithProduct() => _orderRepository
+                                                               .GetAllOrders();
 
         /// <summary>
         /// IDisposable:

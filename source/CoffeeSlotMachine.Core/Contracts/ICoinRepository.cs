@@ -9,6 +9,6 @@ namespace CoffeeSlotMachine.Core.Contracts
 
         public void AddCoin(int coinValue);
 
-        public void RemoveCoin(Coin[] coins);
+        public void RemoveCoin(int coinValue);
     }
 }
