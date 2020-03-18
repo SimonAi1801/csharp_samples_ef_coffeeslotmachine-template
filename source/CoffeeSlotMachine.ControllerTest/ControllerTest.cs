@@ -178,7 +178,7 @@ namespace CoffeeSlotMachine.ControllerTest
                 Assert.AreEqual("3*200 + 4*100 + 3*50 + 3*20 + 5*10 + 4*5", controller.GetCoinDepotString());
 
                 var orders = controller.GetAllOrdersWithProduct().ToArray();
-                Assert.AreEqual(2, orders.Length, "Es sind zewei Bestellungen");
+                Assert.AreEqual(2, orders.Length, "Es sind zwei Bestellungen");
                 Assert.AreEqual(0, orders[0].DonationCents, "Keine Spende");
                 Assert.AreEqual(110, orders[0].ThrownInCents, "230 Cents wurden eingeworfen");
                 Assert.AreEqual("Ristretto", orders[0].Product.Name, "Produktname Ristretto");
@@ -215,10 +215,24 @@ namespace CoffeeSlotMachine.ControllerTest
                 isFinished = controller.InsertCoin(order, 200);
                 Assert.AreEqual(true, isFinished, "260 Cent sind zu viel");
 
-                Assert.AreEqual(270, order.ThrownInCents, "Einwurf stimmt nicht");
-                Assert.AreEqual(270 - product.PriceInCents, order.ReturnCents);
+                Assert.AreEqual(260, order.ThrownInCents, "Einwurf stimmt nicht");
+                Assert.AreEqual(260 - product.PriceInCents, order.ReturnCents);
                 Assert.AreEqual(0, order.DonationCents);
-                Assert.AreEqual("100;50;20;20;5", order.ReturnCoinValues);
+                Assert.AreEqual("100;50;20;10;10;5", order.ReturnCoinValues);
+
+                product = products.Single(p => p.Name == "Lungo");
+                order = controller.OrderCoffee(product);
+                isFinished = controller.InsertCoin(order, 10);
+                Assert.AreEqual(false, isFinished, "10 Cent sind zu wenig");
+                isFinished = controller.InsertCoin(order, 50);
+                Assert.AreEqual(false, isFinished, "60 Cent sind zu wenig");
+                isFinished = controller.InsertCoin(order, 200);
+                Assert.AreEqual(true, isFinished, "260 Cent sind zu viel");
+
+                Assert.AreEqual(260, order.ThrownInCents, "Einwurf stimmt nicht");
+                Assert.AreEqual(260 - product.PriceInCents, order.ReturnCents);
+                Assert.AreEqual(5, order.DonationCents);
+                Assert.AreEqual("100;50;10;10;10;5;5", order.ReturnCoinValues);
 
 
                 product = products.Single(p => p.Name == "Ristretto");
@@ -228,27 +242,32 @@ namespace CoffeeSlotMachine.ControllerTest
 
                 Assert.AreEqual(200, order.ThrownInCents, "Einwurf stimmt nicht");
                 Assert.AreEqual(200 - product.PriceInCents, order.ReturnCents);
-                Assert.AreEqual(20, order.DonationCents);
-                Assert.AreEqual("100;20", order.ReturnCoinValues);
+                Assert.AreEqual(40, order.DonationCents);
+                Assert.AreEqual("50;50", order.ReturnCoinValues);
 
                 var coins = controller.GetCoinDepot().ToArray();
                 int sumOfCents = coins.Sum(c => c.CoinValue * c.Amount);
-                Assert.AreEqual(890, sumOfCents, "Beim Start sind 705 Cents + 60 Cents für Ristretto + 65 Cent für Lungo + 60 Cent Ristretto");
-                Assert.AreEqual("3*200 + 1*100 + 3*50 + 0*20 + 3*10 + 2*5", controller.GetCoinDepotString());
+                Assert.AreEqual(1450, sumOfCents, "Beim Start sind 1270 Cents + 60 Cents für Ristretto + 2 * 65 Cent für Lungo");
+                Assert.AreEqual("7*200 + 0*100 + 1*50 + 0*20 + 0*10 + 0*5", controller.GetCoinDepotString());
 
                 var orders = controller.GetAllOrdersWithProduct().ToArray();
-                Assert.AreEqual(3, orders.Length, "Es sind zewei Bestellungen");
+                Assert.AreEqual(4, orders.Length, "Es sind vier Bestellungen");
                 Assert.AreEqual(0, orders[0].DonationCents, "Keine Spende");
-                Assert.AreEqual(200, orders[0].ThrownInCents, "230 Cents wurden eingeworfen");
+                Assert.AreEqual(200, orders[0].ThrownInCents, "200 Cents wurden eingeworfen");
                 Assert.AreEqual("Ristretto", orders[0].Product.Name, "Produktname Ristretto");
 
                 Assert.AreEqual(0, orders[1].DonationCents, "Keine Spende");
-                Assert.AreEqual(270, orders[1].ThrownInCents, "230 Cents wurden eingeworfen");
+                Assert.AreEqual(260, orders[1].ThrownInCents, "260 Cents wurden eingeworfen");
                 Assert.AreEqual("Lungo", orders[1].Product.Name, "Produktname Lungo");
 
-                Assert.AreEqual(20, orders[2].DonationCents, "Eine Spende von 20 Cent");
-                Assert.AreEqual(200, orders[2].ThrownInCents, "230 Cents wurden eingeworfen");
-                Assert.AreEqual("Ristretto", orders[2].Product.Name, "Produktname Lungo");
+                Assert.AreEqual(5, orders[2].DonationCents, "Eine Spende von 5 Cent");
+                Assert.AreEqual(260, orders[2].ThrownInCents, "260 Cents wurden eingeworfen");
+                Assert.AreEqual("Lungo", orders[2].Product.Name, "Produktname Lungo");
+
+
+                Assert.AreEqual(40, orders[3].DonationCents, "Eine Spende von 5 Cent");
+                Assert.AreEqual(200, orders[3].ThrownInCents, "200 Cents wurden eingeworfen");
+                Assert.AreEqual("Ristretto", orders[3].Product.Name, "Produktname Lungo");
             }
         }
 

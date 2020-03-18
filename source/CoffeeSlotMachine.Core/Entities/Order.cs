@@ -15,8 +15,6 @@ namespace CoffeeSlotMachine.Core.Entities
         private int _returnCents;
         private int _donationCents;
 
-
-
         /// <summary>
         /// Datum und Uhrzeit der Bestellung
         /// </summary>
@@ -62,7 +60,6 @@ namespace CoffeeSlotMachine.Core.Entities
             Time = DateTime.Now;
         }
 
-
         /// <summary>
         /// Münze wird eingenommen.
         /// </summary>
@@ -91,48 +88,25 @@ namespace CoffeeSlotMachine.Core.Entities
         public void FinishPayment(IEnumerable<Coin> coins)
         {
             int ret = _returnCents;
-
             if (ret == 0)
             {
                 ReturnCoinValues = "0";
             }
             foreach (var item in coins.OrderByDescending(c => c.CoinValue))
             {
-                if (ret >= item.CoinValue && item.Amount > 0)
+                while (ret >= item.CoinValue && item.Amount > 0 && ret > 0)
                 {
-                    if (ret >= item.CoinValue)
-                    {
-                        ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue};";
-                    }
-                    else
-                    {
-                        ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue}";
-                    }
-
                     ret -= item.CoinValue;
                     item.Amount--;
-
-                    while (ret >= item.CoinValue && item.Amount > 0)
-                    {
-                        ret -= item.CoinValue;
-                        item.Amount--;
-                        if (ret >= item.CoinValue)
-                        {
-                            ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue};";
-                        }
-                        else
-                        {
-                            ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue}";
-                        }
-                    }
+                    ReturnCoinValues = $"{ReturnCoinValues}{item.CoinValue};";
                 }
-
             }
-
-            if (ret > 0)
+            if (ReturnCoinValues.Length > 1)
             {
-                _donationCents = _returnCents;
+                ReturnCoinValues = ReturnCoinValues.Remove(ReturnCoinValues.Length - 1);
             }
+            _donationCents = ret;
         }
+
     }
 }
