@@ -7,6 +7,5 @@ namespace CoffeeSlotMachine.Core.Contracts
     {
         public Product[] GetAllProducts();
 
-        public Product GetProductById(int id);
     }
 }

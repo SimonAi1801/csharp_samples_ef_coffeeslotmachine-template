@@ -19,9 +19,5 @@ namespace CoffeeSlotMachine.Persistence
                                             _dbContext
                                             .Products
                                             .ToArray();
-
-        public Product GetProductById(int id) =>
-                                            _dbContext.Products
-                                            .Find(id);
     }
 }

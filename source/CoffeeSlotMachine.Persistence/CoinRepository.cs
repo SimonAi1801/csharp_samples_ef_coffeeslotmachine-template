@@ -27,15 +27,5 @@ namespace CoffeeSlotMachine.Persistence
             dbCoin.Amount++;
             _dbContext.SaveChanges();
         }
-
-        public void RemoveCoin(int coinValue)
-        {
-
-            var dbCoin = _dbContext
-                          .Coins
-                          .SingleOrDefault(c => c.Amount == coinValue);
-            dbCoin.Amount--;
-            _dbContext.SaveChanges();
-        }
     }
 }
