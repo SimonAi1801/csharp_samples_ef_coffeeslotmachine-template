@@ -15,6 +15,7 @@ namespace CoffeeSlotMachine.Core.Entities
         private int _donationCents;
 
 
+
         /// <summary>
         /// Datum und Uhrzeit der Bestellung
         /// </summary>
@@ -53,6 +54,14 @@ namespace CoffeeSlotMachine.Core.Entities
         /// </summary>
         public int DonationCents => _donationCents;
 
+        public Order()
+        {
+            ThrownInCoinValues = "";
+            ReturnCoinValues = "";
+            Time = DateTime.Now;
+        }
+
+
         /// <summary>
         /// Münze wird eingenommen.
         /// </summary>
@@ -61,17 +70,15 @@ namespace CoffeeSlotMachine.Core.Entities
         public bool InsertCoin(int coinValue)
         {
             _throwenInCents += coinValue;
-            int diff = _throwenInCents - Product.PriceInCents;
+            ThrownInCoinValues = $"{ThrownInCoinValues}{coinValue}";
 
-            if (diff >= 0)
+            if (_throwenInCents >= Product.PriceInCents)
             {
-                _returnCoins = diff;
+                _returnCoins = _throwenInCents - Product.PriceInCents;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            ThrownInCoinValues = $"{ThrownInCoinValues};";
+            return false;
         }
 
         /// <summary>
@@ -82,6 +89,7 @@ namespace CoffeeSlotMachine.Core.Entities
         /// <param name="coins">Aktueller Zustand des Münzdepots</param>
         public void FinishPayment(IEnumerable<Coin> coins)
         {
+
             throw new NotImplementedException();
         }
     }

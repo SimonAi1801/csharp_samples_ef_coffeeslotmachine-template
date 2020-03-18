@@ -43,7 +43,6 @@ namespace CoffeeSlotMachine.Core.Logic
         {
             return new Order()
             {
-                Time = DateTime.Now,
                 Product = product,
                 ProductId = product.Id
             };
@@ -58,14 +57,17 @@ namespace CoffeeSlotMachine.Core.Logic
         public bool InsertCoin(Order order, int coinValue)
         {
             bool isFinished = false;
-            _coinRepository.AddCoin(coinValue);
-            
             if (order.InsertCoin(coinValue))
             {
-                order.FinishPayment(_dbContext.Coins
-                      .ToArray());
-                _orderRepository
-                      .UpdateOrder(order);
+                string[] parts = order.ThrownInCoinValues.Split(';');
+                foreach (var item in parts)
+                {
+                    _coinRepository.AddCoin(Convert.ToInt32(item));
+                }
+
+                order.FinishPayment(_coinRepository.GetAllCoins());
+
+                _orderRepository.UpdateOrder(order);
                 isFinished = true;
             }
             return isFinished;
